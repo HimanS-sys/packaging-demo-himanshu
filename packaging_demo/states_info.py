@@ -18,7 +18,7 @@ def is_city_capital_of_state(city: str, state: str) -> bool:
     else:
         matched_city = matching_cities[0]
         return matched_city["state"] == state
-    
+
 if __name__=="__main__":
     is_capital = is_city_capital_of_state(city="Montgomery", state="Alabama")
     print(f"is capital: {is_capital}")

@@ -11,7 +11,6 @@ package_demo = ["*.json"]
 
 [project]
 name = "packaging-demo-himanshu"
-version = "0.0.5"
 authors = [
     {name = "Himanshu Kandpal", email = "himanshukandpal0799@gmail.com"},
 ]
@@ -27,7 +26,7 @@ dependencies = [
     "numpy",
     "fastapi",
 ]
-
+dynamic = ["version"]
 ##### ---- End of the 'project' table ----
 
 [project.optional-dependencies]
@@ -36,6 +35,8 @@ release = ["build", "twine", "pre-commit"]
 static-code-qa = ["pre-commit"]
 dev = ["packaging-demo-himanshu[test, release, static-code-qa]"]
 
+[tool.setuptools.dynamic]
+version = {file = "version.txt"}
 
 [tool.black]
 line-length = 119
