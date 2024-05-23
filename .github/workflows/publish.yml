@@ -122,7 +122,12 @@ jobs:
         env:
           PROD_PYPI_TOKEN: ${{ secrets.PROD_PYPI_TOKEN }}
       - name: Push Tags
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
+          git config --global user.email "kandpallucky@gmail.com"
+          git config --global user.name "Himanshu Kandpal"
+          git remote set-url origin https://${GH_PAT}@github.com/${{ github.repository }}.git
           git push origin --tags
 
 
