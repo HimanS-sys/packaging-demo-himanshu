@@ -11,7 +11,7 @@ package_demo = ["*.json"]
 
 [project]
 name = "packaging-demo-himanshu"
-version = "0.0.3"
+version = "0.0.5"
 authors = [
     {name = "Himanshu Kandpal", email = "himanshukandpal0799@gmail.com"},
 ]
