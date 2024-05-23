@@ -51,4 +51,4 @@ repos:
     hooks:
     -   id: black
         args:
-        -   --config=./pyproject.toml,
+        -   --config=./pyproject.toml
