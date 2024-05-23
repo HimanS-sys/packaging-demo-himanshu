@@ -21,8 +21,8 @@ repos:
             )
     -   id: requirements-txt-fixer
     -   id: forbid-new-submodules
-    # -   id: no-commit-to-branch
-    #     args: ["--branch=main"]
+    -   id: no-commit-to-branch
+        args: ["--branch=main"]
     # -   id: detect-aws-credentials
     -   id: detect-private-key
 
@@ -52,4 +52,3 @@ repos:
     -   id: black
         args:
         -   --config=./pyproject.toml,
-

@@ -4,7 +4,11 @@ set -e
 
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd)"
 
-function load-dotenv {
+function try-load-dotenv {
+    if [ ! -f "$THIS_DIR/.env" ]; then
+        echo "no .env file found"
+        return 1
+    fi
     while read -r line; do
         export "$line"
     done < <(grep -v '^#' "$THIS_DIR/.env" | grep -v '^$')
@@ -19,7 +23,7 @@ function build {
 }
 
 function publish:test {
-    load-dotenv
+    try-load-dotenv || true
     python -m twine upload dist/* \
         --repository testpypi \
         --username=__token__ \
@@ -27,7 +31,7 @@ function publish:test {
 }
 
 function publish:prod {
-    load-dotenv
+    try-load-dotenv || true
     python -m twine upload dist/* \
     --repository pypi \
     --username=__token__ \
@@ -47,7 +51,6 @@ function clean {
 }
 
 function release:test {
-    lint
     clean
     build
     publish:test
@@ -60,6 +63,9 @@ function release:prod {
 
 function lint {
     pre-commit run --all-files
+}
+function lint:ci {
+    SKIP=no-comit-to-branch pre-commit run --all-files
 }
 function start {
     echo "start task not implemented"

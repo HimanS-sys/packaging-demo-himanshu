@@ -45,7 +45,17 @@ jobs:
           MATRIX_CONTEXT: ${{ toJson(vars) }}
         run: echo "$VARS_CONTEXT"
 
-  build-test-and-publish:
+  check-version-txt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Tag with release version
+        run: |
+          git tag $(cat version.txt)
+
+  lint-format-and-static-code-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,12 +63,68 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.8
-      - run:
-          /bin/bash run.sh install
-          /bin/bash run.sh build
-          /bin/bash run.sh publish:test
+      - name: Install pre-commit
+        run: |
+          pip install pre-commit
+      - name: Lint, Format, and other static code quality checks
+        run: |
+          /bin/bash -x run.sh lint:ci
+
+  build-wheel-and-sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+      - name: Install build CLI
+        run: |
+          pip install build
+      - name: Build Python Package
+        run: |
+          /bin/bash -x run.sh build
+      - name: Upload package artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheel-and-sdist
+          path: ./dist/*
+
+  publish:
+    needs:
+      - build-wheel-and-sdist
+      - lint-format-and-static-code-checks
+      - check-version-txt
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheel-and-sdist
+          path: ./dist/
+      - name: Install Twine
+        run: |
+          pip install twine
+      - name: Publish to Test PyPI
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          /bin/bash -x run.sh publish:test
         env:
-          TEST_PYPI_TOKEN: ${{ secrets }}
+          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+      - name: Publish to Prod PyPI
+        run: |
+          /bin/bash -x run.sh publish:prod
+        env:
+          PROD_PYPI_TOKEN: ${{ secrets.PROD_PYPI_TOKEN }}
+      - name: Push Tags
+        run: |
+          git push origin --tags
+
 
     # - name: Install dependencies
     #   run: |
