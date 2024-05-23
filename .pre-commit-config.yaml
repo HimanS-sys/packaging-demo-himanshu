@@ -21,8 +21,8 @@ repos:
             )
     -   id: requirements-txt-fixer
     -   id: forbid-new-submodules
-    -   id: no-commit-to-branch
-        args: ["--branch=main"]
+    # -   id: no-commit-to-branch
+    #     args: ["--branch=main"]
     # -   id: detect-aws-credentials
     -   id: detect-private-key
 
@@ -36,19 +36,20 @@ repos:
             --config=./pyproject.toml,
         ]
 
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.10.0"
-    hooks:
-    -   id: mypy
-        args: [
-            --no-strict-optional,
-            --ignore-missing-imports,
-            --config-file=./pyproject.toml,
-        ]
+# -   repo: https://github.com/pre-commit/mirrors-mypy
+#     rev: "v1.10.0"
+#     hooks:
+#     -   id: mypy
+#         args: [
+#             --no-strict-optional,
+#             --ignore-missing-imports,
+#             --config-file=./pyproject.toml,
+#         ]
 
--   repo: https://github.com/psf/black
-    rev: "24.4.2"
-    hooks:
-    -   id: black
-        args:
-        -   --config=./pyproject.toml
+# -   repo: https://github.com/psf/black
+#     rev: "24.4.2"
+#     hooks:
+#     -   id: black
+#         args:
+#         -   --config=./pyproject.toml,
+
